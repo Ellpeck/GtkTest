@@ -1,7 +1,9 @@
 ﻿using System;
+using Gdk;
 using GLib;
 using Gtk;
 using Application = Gtk.Application;
+using Window = Gtk.Window;
 
 namespace GtkTest {
     internal static class Program {
@@ -62,6 +64,13 @@ namespace GtkTest {
 
             // file tree view which displays the tree
             var view = new TreeView(tree);
+            // double-clicking a row
+            view.RowActivated += (o, args) => {
+                tree.GetIter(out var iter, args.Path);
+                var value = tree.GetValue(iter, 0);
+                Console.WriteLine("Activated " + value);
+            };
+            // to right-click a row, we have to override TreeView's clicked method :(
             view.AppendColumn("Test Thing", new CellRendererText(), "text", 0);
             view.AppendColumn("Info", new CellRendererText(), "text", 1);
             pane.Pack1(view, false, false);
